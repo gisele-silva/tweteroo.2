@@ -32,19 +32,17 @@ app.post("/sign-up", (req, res) => {
 })
 
 app.get("/tweets", (req, res) => {
+    const dados = req.body
+
     const {page} = req.query
 
     if (page && page < 1) {
         res.status(400).send('Página inválida');
         return;
     }
-    if(!page){
-        res.status(400).send({ error: "Dados não cabem na rota" });
-        return;
-    }
     if (tweets.length <= 10) {
-        res.send([...tweets].reverse());
-        return;
+        const last10Tweets = tweets.slice(-10).reverse()
+        return res.send(last10Tweets)
     }
 
     res.status(200).send([...tweets].reverse().slice((page-1)*10, page*10));
@@ -62,7 +60,7 @@ app.post("/tweets", (req, res) => {
         return
     }
     
-    tweets.push({username: username, tweet: `${tweet} ${tweets.length + 1}`})
+    tweets.push({username, tweet, avatar})
     res.status(201).send({ message: "tweet postado" })
 })
 
